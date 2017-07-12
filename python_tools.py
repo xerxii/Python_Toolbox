@@ -67,22 +67,23 @@ def padder(item, size):
 def hasher(item):
   return sha3_512(bytes( str(item), 'utf-8' )).hexdigest()
       
-
-def for_loop(i, count, increment, logic):
+# Intended to assist those who are used to 'for' loops in C, Java, etc.
+# Needs more versatility, especially when dividing.
+def for_loop(i, limit, increment, logic):
     if logic is 'add':
-        while (i < count):
+        while (i < limit):
             i += increment
         return i
     elif logic is 'sub':
-        while (i < count):
+        while (i < limit):
             i -= increment
         return i
     elif logic is 'mul':
-        while (i < count)
+        while (i < limit)
             i *= increment
         return i
     elif logic is 'div':
-        while (i < count):
+        while (i > limit):
             i = i / increment
         return
       
@@ -155,40 +156,6 @@ def set_task_result(task_obj, result): return task_obj.set_result(result)
 def wakeup_task_with_coro(task_obj, coro): return task._wakeup(coro)    
     
     
-    
-###################
-# MultiProcessing #
-###################
-    
-    
-
-
-
-
-
-##########
-# CTypes # 
-##########
-
-def ctypes_alloc_aligned(size, alignment):
-
-  bufSize = size+(alignment-1)
-  raw_memory = bytearray(bufSize)
-
-  ctypes_raw_type = (ctypes.c_char * bufSize)
-  ctypes_raw_memory = ctypes_raw_type.from_buffer(raw_memory)
-
-  raw_address = ctypes.addressof(ctypes_raw_memory)
-  offset = raw_address % alignment
-  offset_to_aligned = (alignment - offset) % alignment
-
-  ctypes_aligned_type = (ctypes.c_char * (bufSize-offset_to_aligned))
-  ctypes_aligned_memory = ctypes_aligned_type.from_buffer(raw_memory, offset_to_aligned)
-
-  return ctypes_aligned_memory
-  
- 
-
 
 ##################
 # Frame Handling #
