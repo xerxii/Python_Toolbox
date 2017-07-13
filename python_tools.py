@@ -1,6 +1,9 @@
 #! /usr/bin/env python3.6
 # -*- coding: utf-8 -*-
 
+# This file was never intended for use in a production based program
+# It is a collection of functions/classes to use in an interpreter such as iPython
+#
 # Some modules such as aiohttp have C implementations not under GPL
 # Anything which is GPL compatible assumes GPL compatibility
 
@@ -22,7 +25,7 @@ rtlsdr sys subprocess signal secrets smtplib ssl
 math os tkinter uuid urllib
 '''.split()
 
-# This will import the modules in imported
+# This will to attempt to import all the modules
 try:
     for each in imported:
         exec(f"import {each.replace(',','').replace('.','')}")
@@ -184,3 +187,7 @@ def callframes(num_of_calls):
     for num in range(0, num_of_calls):
         frame = sys._getframe(num)
         show_frame(num, frame)
+
+                      
+# Do not include a 'if __name__ == __main__:' line at the end!
+                      
