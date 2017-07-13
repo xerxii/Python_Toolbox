@@ -1,5 +1,8 @@
-#!/usr/bin/env python3.6
+#! /usr/bin/env python3.6
 # -*- coding: utf-8 -*-
+
+# Some modules such as aiohttp have C implementations not under GPL
+# Anything which is GPL compatible assumes GPL compatibility
 
 __author__ = 'xerxii'
 __email__ = 'xerx@tutanota.com'
@@ -26,17 +29,24 @@ try:
 except(ImportError) as e:
     print(f"The following occured: {e!s}")
 
-from asyncio import iscoroutinefunction    
+# Used for coroutine function checking
+from asyncio import iscoroutinefunction
+# Used in the fragmentator function
 from math import ceil
+# Used for simple and basic sha-512 version 3 hashing
 from hashlib import sha3_512
 
 ###################
 # General Purpose #
 ###################
 
+# Create a basic abstract event loop
 loop = asyncio.get_event_loop()
+# Function to call system commands. Intended for interpreter use.
 sysc = subprocess.os.system
 
+# Converts strings and integer data types to binary form
+# If using on values from a list or dictionary, iterate with this function
 def to_binary(item):
     
     if isinstance(item, int):
@@ -44,6 +54,7 @@ def to_binary(item):
     
     elif isinstance(item, str):
         return ' '.join(format(ord(x), 'b') for x in item)
+    
     else:
         raise TypeError("to_binary converts Strings and Ints")
         
@@ -67,34 +78,33 @@ def padder(item, size):
 def hasher(item):
   return sha3_512(bytes( str(item), 'utf-8' )).hexdigest()
       
-# Intended to assist those who are used to 'for' loops in C, Java, etc.
-# Needs more versatility, especially when dividing.
-def for_loop(i, limit, increment, logic):
-    if logic is 'add':
-        while (i < limit):
-            i += increment
-        return i
-    elif logic is 'sub':
-        while (i < limit):
-            i -= increment
-        return i
-    elif logic is 'mul':
-        while (i < limit)
-            i *= increment
-        return i
-    elif logic is 'div':
-        while (i > limit):
-            i = i / increment
-        return
+    
+    
+######################
+# Basic System Tools #
+######################
+
+# Is given a directory, and displays files
+# Goes through sub folders to be more "thorough" than 'ls'
+def display_files(directory):
+    if sys.platform.startswith('win32'):
+        for subdir, dirs, files in os.walk(directory):
+            for file in files:
+                print(os.path.join(subdir, file)
+    else:
+        for subdir, dirs, files in os.walk(directory):
+            for file in files:
+                print(os.path.join(subdir, file)  
       
+                      
 #######################
 # Coroutine Handeling #
 #######################
 
 
-# All coroutines use 'async' def instead of the @coroutine decorator, for return type purposes
+# All coroutines defined here use 'async' def instead of the @coroutine decorator, for return type purposes
+# Be aware that using 'wait' awaits a single coroutine object at a time, and 'waits' should be avoided.
 
-# Uses wait() function to await. Could not [await coro for coro in coros] because exe is not async
 async def waits(*coros): return [await each for each in coros]
 
 async def wait(coro): return await coro
@@ -102,15 +112,15 @@ async def wait(coro): return await coro
 def execute(coro): return loop.run_until_complete(wait(coro))
 
 def executes(*coros): 
-    for each in  [waits(coro) for coro in coros]: return loop.run_until_complete(each)
+    for each in  [wait(coro) for coro in coros]: return loop.run_until_complete(each)
     
 def executes_if_true(*coros, condition):
     if condition: 
-        for each in  [waits(coro) for coro in coros]: return loop.run_until_complete(each)
+        for each in  [wait(coro) for coro in coros]: return loop.run_until_complete(each)
         
 def executes_if_false(*coros, condition):
     if not condition: 
-        for each in  [waits(coro) for coro in coros]: return loop.run_until_complete(each)
+        for each in  [wait(coro) for coro in coros]: return loop.run_until_complete(each)
 
 def run_safely(coro, loop):
     return asyncio.run_coroutine_threadsafe(coro,loop)
