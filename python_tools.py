@@ -20,7 +20,7 @@ aiodns async_timeout
 base64 binascii binhex bs4 ctypes
 collections concurrent configparser
 cryptography django enum email flask io
-hashlib multiprocessing netifaces pstats psutil
+hashlib multiprocessing netifaces pstats psutil pycrypto
 rtlsdr sys subprocess signal secrets smtplib ssl
 math os tkinter uuid urllib
 '''.split()
@@ -38,6 +38,8 @@ from asyncio import iscoroutinefunction
 from math import ceil
 # Used for simple and basic sha-512 version 3 hashing
 from hashlib import sha3_512
+# Used for simple and basic AES-implementations
+from pyaes import AESModeOfOperationECB as ECB
 
 ###################
 # General Purpose #
@@ -45,8 +47,6 @@ from hashlib import sha3_512
 
 # Create a basic abstract event loop
 loop = asyncio.get_event_loop()
-# Function to call system commands. Intended for interpreter use.
-sysc = subprocess.os.system
 
 # Converts strings and integer data types to binary form
 # If using on values from a list or dictionary, iterate with this function
@@ -80,8 +80,13 @@ def padder(item, size):
     
 def hasher(item):
   return sha3_512(bytes( str(item), 'utf-8' )).hexdigest()
-      
-    
+
+def py_encrypter(key, plaintext):
+    return ECB(bytes(''.format(key),'utf-8')).encrypt(bytes(''.format(plaintext), 'utf-8'))
+
+def py_decrypter(key, ciphertext):
+    return ECB(bytes(''.format(key),'utf-8')).dencrypt(bytes(''.format(ciphertext), 'utf-8'))
+
     
 ######################
 # Basic System Tools #
@@ -98,7 +103,9 @@ def display_files(directory):
         for subdir, dirs, files in os.walk(directory):
             for file in files:
                 print(os.path.join(subdir, file)  
-      
+                      
+# Function to call system commands. Intended for interpreter use.
+sysc = subprocess.os.system      
                       
 #######################
 # Coroutine Handeling #
@@ -168,21 +175,18 @@ def set_task_result(task_obj, result): return task_obj.set_result(result)
 
 def wakeup_task_with_coro(task_obj, coro): return task._wakeup(coro)    
     
-    
 
 ##################
 # Frame Handling #
 ##################
 def show_frame(num, frame):
     print("Frame = {0} \nFunction_Called = {1} \nFile/Line = {2}:{3}".format(sys._getframe(num), frame.f_code.co_name, frame.f_code.co_filename, frame.f_lineno))
-
+                      
 def frames_of_funcs(count_of_funcs):
     for num in range(0, count_of_funcs):
         frame = sys._getframe(count_of_funcs)
         show_frame(num, frame)
-
-
-
+                      
 def callframes(num_of_calls):
     for num in range(0, num_of_calls):
         frame = sys._getframe(num)
